@@ -83,7 +83,7 @@ Predictify creates an **on-chain prediction ecosystem** where:
 
 - **Blockchain**: Chiliz Chain
 - **Smart Contracts**: Solidity (predictions, streaks, tipping)
-- **Frontend**: Next.js, React, Tailwind CSS
+- **Frontend**: Vite, Tailwind CSS
 - **Wallet Integration**: Privy Wallet 
 - **Storage**: IPFS for video/text content
 - **Oracle**: 
@@ -117,14 +117,6 @@ Predictify creates an **on-chain prediction ecosystem** where:
 - Extends streak to 4 predictions
 - Featured as "🔥 Prophet of the Week"
 - Mints "Derby Oracle" badge NFT
-
-## 🏆 Hackathon Fit
-
-| Criteria | Strength |
-|----------|----------|
-| **Concept (20%)** | Fresh viral mechanic with streak-based content |
-| **Technical (45%)** | Smart contracts, NFTs, tipping, oracle integration |
-| **Engagement (35%)** | High retention through matchday traffic + social features |
 
 ## 🚀 Getting Started
 
