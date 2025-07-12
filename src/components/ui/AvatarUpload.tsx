@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, Camera, X, Check, User } from 'lucide-react';
+import { Upload, Camera, X, Check, User, Loader2 } from 'lucide-react';
+import { uploadAvatarToIPFS } from '../../utils/uploadToIpfs';
 
 interface AvatarUploadProps {
   currentAvatar?: string;
@@ -17,6 +18,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentAvatar || null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingToIPFS, setIsUploadingToIPFS] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sizeClasses = {
@@ -58,7 +60,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
     }
   }, [disabled]);
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
@@ -70,16 +72,35 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
     }
 
     setIsUploading(true);
+    setIsUploadingToIPFS(true);
     
-    // Create a preview URL
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      setPreviewUrl(result);
-      onAvatarChange(result);
+    try {
+      // Create a preview URL first
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const result = e.target?.result as string;
+        setPreviewUrl(result);
+        
+        // Upload to IPFS
+        try {
+          const ipfsUrl = await uploadAvatarToIPFS(file);
+          onAvatarChange(ipfsUrl);
+          console.log('✅ Avatar uploaded to IPFS:', ipfsUrl);
+        } catch (error) {
+          console.error('❌ Failed to upload to IPFS:', error);
+          alert('Failed to upload image. Please try again.');
+          setPreviewUrl(null);
+        } finally {
+          setIsUploadingToIPFS(false);
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('❌ Error processing file:', error);
+      setIsUploadingToIPFS(false);
       setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,9 +175,14 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
           )}
 
           {/* Uploading Indicator */}
-          {isUploading && (
+          {(isUploading || isUploadingToIPFS) && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex flex-col items-center space-y-2">
+                <Loader2 className="w-6 h-6 text-white animate-spin" />
+                {isUploadingToIPFS && (
+                  <span className="text-xs text-white">Uploading to IPFS...</span>
+                )}
+              </div>
             </div>
           )}
         </div>

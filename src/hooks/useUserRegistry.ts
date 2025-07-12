@@ -107,7 +107,7 @@ export const useUserRegistry = () => {
         abi: USER_REGISTRY_CONTRACT.abi,
         functionName: 'registerAthlete',
         args: [
-          profile.avatar || "https://sapphire-following-turkey-778.mypinata.cloud/ipfs/QmQw6eumeuiLVLby4SP4E7QN1gufHySjoJpjoNw8hK9Mx8", // Avatar is now first parameter
+          profile.avatar || '', // Avatar is now first parameter
           profile.name,
           BigInt(profile.age),
           profile.sport,
