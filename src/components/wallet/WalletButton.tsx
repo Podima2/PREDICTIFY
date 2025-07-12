@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
 import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, Zap } from 'lucide-react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useWallet } from '../../hooks/useWallet';
 
 export const WalletButton: React.FC = () => {
   const { 
     ready, 
-    authenticated, 
-    user, 
-    login, 
-    logout 
-  } = usePrivy();
+    isConnected, 
+    isConnecting,
+    address,
+    connectWallet,
+    disconnectWallet,
+    formatAddress
+  } = useWallet();
   
-  const { wallets } = useWallets();
   const [showDropdown, setShowDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const primaryWallet = wallets.length > 0 ? wallets[0] : null;
-  const address = primaryWallet?.address;
-
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
 
   const copyAddress = () => {
     if (address) {
@@ -42,14 +36,15 @@ export const WalletButton: React.FC = () => {
     );
   }
 
-  if (!authenticated) {
+  if (!isConnected) {
     return (
       <button
-        onClick={login}
-        className="flex items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-red-500/20 tracking-wide text-sm"
+        onClick={connectWallet}
+        disabled={isConnecting}
+        className="flex items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-red-500/20 tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Wallet className="w-4 h-4" />
-        <span>CONNECT WALLET</span>
+        <span>{isConnecting ? 'CONNECTING...' : 'CONNECT WALLET'}</span>
       </button>
     );
   }
@@ -65,15 +60,15 @@ export const WalletButton: React.FC = () => {
           <Zap className="w-4 h-4 text-red-400" />
         </div>
         
-        <div className="flex items-center space-x-2">
-          <div className="text-left">
-            <div className="font-semibold">
-              {address ? formatAddress(address) : 'Connected'}
+                  <div className="flex items-center space-x-2">
+            <div className="text-left">
+              <div className="font-semibold">
+                {address ? formatAddress(address) : 'Connected'}
+              </div>
+              <div className="text-xs text-red-400 font-medium -mt-0.5">
+                Chiliz Chain
+              </div>
             </div>
-            <div className="text-xs text-red-400 font-medium -mt-0.5">
-              Chiliz Chain
-            </div>
-          </div>
           
           <ChevronDown className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
             showDropdown ? 'rotate-180' : ''
@@ -161,7 +156,7 @@ export const WalletButton: React.FC = () => {
           {/* Disconnect */}
           <button
             onClick={() => {
-              logout();
+              disconnectWallet();
               setShowDropdown(false);
             }}
             className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-950/50 rounded-lg transition-colors font-medium hover:scale-[1.01] active:scale-[0.99]"
