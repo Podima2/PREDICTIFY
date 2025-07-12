@@ -46,7 +46,10 @@ export const useChilizWallet = () => {
       return;
     }
 
-    if (authenticated && primaryWallet) {
+    // Only consider connected if user is authenticated AND we have an actual wallet with an address
+    if (authenticated && primaryWallet && primaryWallet.address) {
+      console.log('✅ Chiliz wallet connected:', { address: primaryWallet.address, authenticated });
+      
       // Mock fan token balances - in production, fetch from Chiliz Chain
       const mockFanTokens: FanTokenBalance[] = [
         { symbol: 'CHZ', name: 'Chiliz', balance: 1250.00, logo: '🌶️', teamId: 'chiliz' },
@@ -65,6 +68,7 @@ export const useChilizWallet = () => {
         error: null,
       });
     } else {
+      console.log('❌ Chiliz wallet not connected:', { authenticated, hasWallet: !!primaryWallet, hasAddress: !!primaryWallet?.address });
       setWalletState({
         address: null,
         chzBalance: 0,
@@ -92,7 +96,39 @@ export const useChilizWallet = () => {
 
   const disconnectWallet = async () => {
     try {
+      console.log('🔌 Attempting to disconnect Chiliz wallet...');
+      
+      // Check if we're in a valid state to logout
+      if (!ready) {
+        console.log('⚠️ Privy not ready, skipping logout');
+        setWalletState({
+          address: null,
+          chzBalance: 0,
+          fanTokens: [],
+          isConnected: false,
+          isConnecting: false,
+          error: null,
+        });
+        return;
+      }
+
+      if (!authenticated) {
+        console.log('⚠️ User not authenticated, skipping logout');
+        setWalletState({
+          address: null,
+          chzBalance: 0,
+          fanTokens: [],
+          isConnected: false,
+          isConnecting: false,
+          error: null,
+        });
+        return;
+      }
+
+      // Attempt logout
       await logout();
+      console.log('✅ Chiliz wallet disconnected successfully');
+      
       setWalletState({
         address: null,
         chzBalance: 0,
@@ -102,11 +138,19 @@ export const useChilizWallet = () => {
         error: null,
       });
     } catch (error) {
-      console.error('Failed to disconnect wallet:', error);
-      setWalletState(prev => ({
-        ...prev,
+      console.error('❌ Failed to disconnect Chiliz wallet:', error);
+      
+      // Even if logout fails, we should still reset our local state
+      setWalletState({
+        address: null,
+        chzBalance: 0,
+        fanTokens: [],
+        isConnected: false,
+        isConnecting: false,
         error: 'Failed to disconnect',
-      }));
+      });
+      
+      // Don't throw the error to prevent UI crashes
     }
   };
 

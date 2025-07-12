@@ -40,7 +40,9 @@ export const useWallet = () => {
       return;
     }
 
-    if (authenticated && primaryWallet) {
+    // Only consider connected if user is authenticated AND we have an actual wallet with an address
+    if (authenticated && primaryWallet && primaryWallet.address) {
+      console.log('✅ Wallet connected:', { address: primaryWallet.address, authenticated });
       setWalletState({
         address: primaryWallet.address,
         balance: '0', // We'll fetch this separately if needed
@@ -50,6 +52,7 @@ export const useWallet = () => {
         chainId: primaryWallet.chainId ? parseInt(primaryWallet.chainId) : null,
       });
     } else {
+      console.log('❌ Wallet not connected:', { authenticated, hasWallet: !!primaryWallet, hasAddress: !!primaryWallet?.address });
       setWalletState({
         address: null,
         balance: null,
@@ -84,7 +87,39 @@ export const useWallet = () => {
 
   const disconnectWallet = async () => {
     try {
+      console.log('🔌 Attempting to disconnect wallet...');
+      
+      // Check if we're in a valid state to logout
+      if (!ready) {
+        console.log('⚠️ Privy not ready, skipping logout');
+        setWalletState({
+          address: null,
+          balance: null,
+          isConnected: false,
+          isConnecting: false,
+          error: null,
+          chainId: null,
+        });
+        return;
+      }
+
+      if (!authenticated) {
+        console.log('⚠️ User not authenticated, skipping logout');
+        setWalletState({
+          address: null,
+          balance: null,
+          isConnected: false,
+          isConnecting: false,
+          error: null,
+          chainId: null,
+        });
+        return;
+      }
+
+      // Attempt logout
       await logout();
+      console.log('✅ Wallet disconnected successfully');
+      
       setWalletState({
         address: null,
         balance: null,
@@ -94,11 +129,19 @@ export const useWallet = () => {
         chainId: null,
       });
     } catch (error) {
-      console.error('Failed to disconnect wallet:', error);
-      setWalletState(prev => ({
-        ...prev,
+      console.error('❌ Failed to disconnect wallet:', error);
+      
+      // Even if logout fails, we should still reset our local state
+      setWalletState({
+        address: null,
+        balance: null,
+        isConnected: false,
+        isConnecting: false,
         error: 'Failed to disconnect',
-      }));
+        chainId: null,
+      });
+      
+      // Don't throw the error to prevent UI crashes
     }
   };
 
