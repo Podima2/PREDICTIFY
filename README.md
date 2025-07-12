@@ -169,14 +169,3 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md).
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file.
-
-## 🔗 Links
-
-- [Live Demo](https://talentflow-demo.vercel.app)
-- [AI Documentation](https://docs.talentflow.ai)
-- [Scout Portal](https://scouts.talentflow.ai)
-- [Athlete App](https://app.talentflow.ai)
-
----
-
-**Built with ❤️ for the future of sports talent discovery**
