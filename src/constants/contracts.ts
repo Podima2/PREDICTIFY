@@ -1,12 +1,13 @@
 // Contract configuration for TalentFlow UserRegistry
 export const USER_REGISTRY_CONTRACT = {
   // Replace this with your deployed contract address after deployment
-  address: '0xd011e2250Eff6CB95266c0cC5730E8F4B4158104' as `0x${string}`,
+  address: '0x37DB201d9FF1f4ba80B35A6BfF0de292f58Fc2F9' as `0x${string}`,
   
   // Contract ABI - generated from the UserRegistry.sol contract
   abi: [
     {
       "inputs": [
+        { "internalType": "string", "name": "_avatar", "type": "string" },
         { "internalType": "string", "name": "_name", "type": "string" },
         { "internalType": "uint256", "name": "_age", "type": "uint256" },
         { "internalType": "string", "name": "_sport", "type": "string" },
@@ -20,6 +21,7 @@ export const USER_REGISTRY_CONTRACT = {
     },
     {
       "inputs": [
+        { "internalType": "string", "name": "_avatar", "type": "string" },
         { "internalType": "string", "name": "_name", "type": "string" },
         { "internalType": "string", "name": "_organization", "type": "string" },
         { "internalType": "string", "name": "_position", "type": "string" }
@@ -48,6 +50,7 @@ export const USER_REGISTRY_CONTRACT = {
       "outputs": [
         {
           "components": [
+            { "internalType": "string", "name": "avatar", "type": "string" },
             { "internalType": "string", "name": "name", "type": "string" },
             { "internalType": "uint256", "name": "age", "type": "uint256" },
             { "internalType": "string", "name": "sport", "type": "string" },
@@ -70,6 +73,7 @@ export const USER_REGISTRY_CONTRACT = {
       "outputs": [
         {
           "components": [
+            { "internalType": "string", "name": "avatar", "type": "string" },
             { "internalType": "string", "name": "name", "type": "string" },
             { "internalType": "string", "name": "organization", "type": "string" },
             { "internalType": "string", "name": "position", "type": "string" }
