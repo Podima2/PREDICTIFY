@@ -1,7 +1,7 @@
 // Contract configuration for TalentFlow UserRegistry
 export const USER_REGISTRY_CONTRACT = {
   // Replace this with your deployed contract address after deployment
-  address: '0x999424dc98533126F128336de9380A5f632B2B58' as `0x${string}`,
+  address: '0xd011e2250Eff6CB95266c0cC5730E8F4B4158104' as `0x${string}`,
   
   // Contract ABI - generated from the UserRegistry.sol contract
   abi: [
