@@ -154,3 +154,4 @@ node_modules
 ignition/deployments/chain-31337
 .vite/deps_temp_2bb6590a/package.json
 package-lock.json
+.DS_Store
