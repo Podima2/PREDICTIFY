@@ -250,7 +250,7 @@ const UploadPage: React.FC = () => {
         </div>
 
         {/* Debug Section */}
-        <div className="mb-8 bg-neutral-950 border border-neutral-800 rounded-xl p-6 animate-slide-up" style={{ animationDelay: '50ms' }}>
+        {/* <div className="mb-8 bg-neutral-950 border border-neutral-800 rounded-xl p-6 animate-slide-up" style={{ animationDelay: '50ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-white flex items-center space-x-2">
               <Wifi className="w-5 h-5" />
@@ -268,7 +268,7 @@ const UploadPage: React.FC = () => {
             <p className="text-neutral-400 mb-2">Role: {userRole === UserRole.Athlete ? '✅ Athlete' : userRole === UserRole.Scout ? '👁️ Scout' : '❌ Not Registered'}</p>
             <p className="text-neutral-400 mb-2">IPFS: {connectionStatus || '⏳ Not tested'}</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Progress Bar */}
         <div className="mb-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
