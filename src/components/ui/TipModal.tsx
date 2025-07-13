@@ -48,10 +48,9 @@ export const TipModal: React.FC<TipModalProps> = ({
   const [selectedToken, setSelectedToken] = useState<string>('chz');
   const [selectedAmount, setSelectedAmount] = useState<number>(1);
   const [customAmount, setCustomAmount] = useState<string>('');
-  const [success, setSuccess] = useState(false);
 
   // Use centralized tipping state
-  const { sendTip, isTipping, tipError, clearTipError } = useTipping();
+  const { sendTip, isTipping, tipError, clearTipError, isTransactionSuccess, pendingTransactionHash, isTransactionPending } = useTipping();
 
   const selectedTokenInfo = tokenOptions.find(token => token.value === selectedToken);
   const finalAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
@@ -72,8 +71,6 @@ export const TipModal: React.FC<TipModalProps> = ({
       const result = await sendTip(highlightId, finalAmount, selectedToken, athleteAddress);
       
       if (result.success) {
-        setSuccess(true);
-        
         // Auto-close after showing success message
         setTimeout(() => {
           onClose();
@@ -88,7 +85,6 @@ export const TipModal: React.FC<TipModalProps> = ({
   };
 
   const resetForm = () => {
-    setSuccess(false);
     setCustomAmount('');
     setSelectedAmount(1);
     setSelectedToken('chz');
@@ -129,7 +125,7 @@ export const TipModal: React.FC<TipModalProps> = ({
 
         {/* Content */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
-          {isTipping ? (
+          {isTipping && !pendingTransactionHash ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-yellow-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Loader2 className="w-8 h-8 text-yellow-400 animate-spin" />
@@ -142,15 +138,42 @@ export const TipModal: React.FC<TipModalProps> = ({
                 Don't close this window or refresh the page
               </div>
             </div>
-          ) : success ? (
+          ) : isTransactionPending && pendingTransactionHash ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Waiting for Confirmation...</h3>
+              <p className="text-neutral-400 mb-4">
+                Your tip has been submitted and is waiting for blockchain confirmation
+              </p>
+              <div className="mb-6 p-3 bg-blue-950/50 border border-blue-800/50 rounded-xl">
+                <p className="text-blue-300 text-sm font-medium mb-1">Transaction Hash:</p>
+                <p className="text-blue-400 text-xs font-mono break-all">
+                  {pendingTransactionHash}
+                </p>
+              </div>
+              <div className="text-sm text-neutral-500">
+                This may take a few moments...
+              </div>
+            </div>
+          ) : isTransactionSuccess ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-400" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Tip Sent Successfully!</h3>
-              <p className="text-neutral-400 mb-6">
+              <h3 className="text-xl font-bold text-white mb-2">Tip Confirmed!</h3>
+              <p className="text-neutral-400 mb-4">
                 Your tip of {finalAmount} {selectedTokenInfo?.symbol} has been sent to {athleteName}
               </p>
+              {pendingTransactionHash && (
+                <div className="mb-6 p-3 bg-green-950/50 border border-green-800/50 rounded-xl">
+                  <p className="text-green-300 text-sm font-medium mb-1">Transaction Hash:</p>
+                  <p className="text-green-400 text-xs font-mono break-all">
+                    {pendingTransactionHash}
+                  </p>
+                </div>
+              )}
               <button
                 onClick={handleClose}
                 className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200"

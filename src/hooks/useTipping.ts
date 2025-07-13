@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt, useAccount, useSendTransaction, useBalance } from 'wagmi';
 import { tippingService, TipTransaction } from '../utils/tippingService';
 import { parseEther } from 'viem';
@@ -13,6 +13,8 @@ export interface UseTippingReturn {
   getTotalTipsSent: (address?: string) => { [tokenType: string]: number };
   pendingTransactionHash?: string;
   isTransactionPending: boolean;
+  isTransactionSuccess: boolean;
+  isTransactionError: boolean;
   balance?: bigint;
   isBalanceLoading: boolean;
   tipError: string | null;
@@ -42,6 +44,43 @@ export function useTipping(): UseTippingReturn {
   const clearTipError = useCallback(() => {
     setTipError(null);
   }, []);
+
+  // Monitor transaction success and update tipping service
+  useEffect(() => {
+    if (isTransactionSuccess && pendingTransactionHash) {
+      console.log('✅ Transaction confirmed on blockchain:', pendingTransactionHash);
+      
+      // Update the transaction status in the tipping service
+      tippingService.updateTransactionStatus(pendingTransactionHash, 'success');
+      
+      // Clear the pending transaction hash after a delay
+      setTimeout(() => {
+        setPendingTransactionHash(undefined);
+      }, 3000);
+    }
+  }, [isTransactionSuccess, pendingTransactionHash]);
+
+  // Monitor transaction errors
+  useEffect(() => {
+    if (isTransactionError && pendingTransactionHash) {
+      console.log('❌ Transaction failed on blockchain:', pendingTransactionHash);
+      
+      // Update the transaction status in the tipping service
+      tippingService.updateTransactionStatus(pendingTransactionHash, 'failed');
+      
+      // Set error message
+      if (transactionError) {
+        setTipError(`Transaction failed: ${transactionError.message}`);
+      } else {
+        setTipError('Transaction failed on blockchain');
+      }
+      
+      // Clear the pending transaction hash after a delay
+      setTimeout(() => {
+        setPendingTransactionHash(undefined);
+      }, 3000);
+    }
+  }, [isTransactionError, pendingTransactionHash, transactionError]);
 
   /**
    * Send a tip to an athlete
@@ -193,6 +232,8 @@ export function useTipping(): UseTippingReturn {
     getTotalTipsSent,
     pendingTransactionHash,
     isTransactionPending: isTransactionPending || isTipping,
+    isTransactionSuccess,
+    isTransactionError,
     balance: balance?.value,
     isBalanceLoading,
     tipError,

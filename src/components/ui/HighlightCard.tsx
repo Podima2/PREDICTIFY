@@ -300,10 +300,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
                 </div>
               )}
 
-              {/* Debug Info (remove in production) */}
-              <div className="absolute top-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded opacity-50">
-                {videoError ? '❌' : videoLoaded ? '✅' : '⏳'}
-              </div>
+
             </>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-neutral-900">
