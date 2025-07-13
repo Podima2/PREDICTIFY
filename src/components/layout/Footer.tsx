@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
               <Logo size="sm" variant="white" />
             </div>
             <div>
-              <h3 className="text-lg brand-text text-white">PREDICTIFY</h3>
+              <h3 className="text-lg brand-text text-white">TALENTFLOW</h3>
               <p className="brand-subtitle text-red-400">POWERED BY CHILIZ</p>
             </div>
           </div>
@@ -61,7 +61,7 @@ export const Footer: React.FC = () => {
 
           {/* Copyright */}
           <div className="text-xs text-neutral-500 text-center md:text-right">
-            <p className="font-semibold">© 2025 PREDICTIFY PLATFORM</p>
+            <p className="font-semibold">© 2025 TALENTFLOW PLATFORM</p>
             <div className="flex items-center justify-center md:justify-end space-x-2 mt-1">
               <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
               <span className="font-semibold tracking-wide">CHILIZ HACKATHON</span>
