@@ -210,7 +210,7 @@ export const DiscoverPage: React.FC = () => {
                 >
                   <Clock className="w-4 h-4 inline mr-1" />
                   Recent
-                </button>
+                    </button>
                 <button
                   onClick={() => setSortBy('popular')}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
@@ -221,7 +221,7 @@ export const DiscoverPage: React.FC = () => {
                 >
                   <Heart className="w-4 h-4 inline mr-1" />
                   Popular
-                </button>
+          </button>
                 <button
                   onClick={() => setSortBy('trending')}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
@@ -234,16 +234,16 @@ export const DiscoverPage: React.FC = () => {
                   Trending
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
+                    </div>
+                  </div>
+                </div>
 
         {/* Results Count */}
         <div className="mb-6">
           <p className="text-neutral-400">
             {filteredAndSortedHighlights.length} highlight{filteredAndSortedHighlights.length !== 1 ? 's' : ''} found
           </p>
-        </div>
+                        </div>
 
         {/* Highlights Grid */}
         {filteredAndSortedHighlights.length > 0 ? (
@@ -267,8 +267,8 @@ export const DiscoverPage: React.FC = () => {
                 className="hover:scale-[1.02] transition-transform duration-300"
               />
             ))}
-          </div>
-        ) : (
+                      </div>
+                    ) : (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-neutral-900 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-12 h-12 text-neutral-600" />
@@ -292,8 +292,8 @@ export const DiscoverPage: React.FC = () => {
             >
               Load More Highlights
             </button>
-          </div>
-        )}
+        </div>
+      )}
       </main>
     </div>
   );

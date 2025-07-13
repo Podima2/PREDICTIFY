@@ -149,7 +149,7 @@ export const ProfilePage: React.FC = () => {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
         <div className="bg-neutral-950 border border-neutral-800 rounded-2xl p-8 mb-8">
-          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-6">
             {/* Avatar */}
             <div className="w-24 h-24 bg-gradient-to-br from-red-600 to-orange-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
               {profile?.avatar ? (
@@ -161,27 +161,27 @@ export const ProfilePage: React.FC = () => {
               ) : (
                 profile?.name?.charAt(0) || 'U'
               )}
-            </div>
-
+              </div>
+              
             {/* Profile Info */}
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-white mb-2">{profile?.name || 'Unknown User'}</h1>
-              <div className="flex items-center space-x-4 text-neutral-400">
-                {isAthlete ? (
-                  <>
+                  <div className="flex items-center space-x-4 text-neutral-400">
+                    {isAthlete ? (
+                      <>
                     <span>{profile?.sport || 'Unknown Sport'}</span>
-                    <span>•</span>
+                        <span>•</span>
                     <span>{profile?.position || 'Unknown Position'}</span>
-                    <span>•</span>
+                        <span>•</span>
                     <span>{profile?.age || 'Unknown Age'} years old</span>
-                  </>
-                ) : (
-                  <>
+                      </>
+                    ) : (
+                      <>
                     <span>{profile?.organization || 'Unknown Organization'}</span>
-                    <span>•</span>
+                        <span>•</span>
                     <span>{profile?.position || 'Unknown Position'}</span>
-                  </>
-                )}
+                      </>
+                    )}
               </div>
               {profile?.bio && (
                 <p className="text-neutral-300 mt-3 max-w-2xl">{profile.bio}</p>
@@ -198,17 +198,17 @@ export const ProfilePage: React.FC = () => {
                 <div className="text-center">
                   <div className="text-2xl font-bold text-white">
                     {highlights.reduce((sum: number, h: any) => sum + h.views, 0).toLocaleString()}
-                  </div>
+                </div>
                   <div className="text-neutral-400 text-sm">Views</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-white">
                     {highlights.reduce((sum: number, h: any) => sum + h.likes, 0).toLocaleString()}
-                  </div>
+                </div>
                   <div className="text-neutral-400 text-sm">Likes</div>
                 </div>
-              </div>
-            </div>
+                </div>
+                </div>
           </div>
         </div>
 
@@ -237,7 +237,7 @@ export const ProfilePage: React.FC = () => {
               <TrendingUp className="w-5 h-5 inline mr-2" />
               Stats
             </button>
-            <button
+                <button
               onClick={() => setActiveTab('reports')}
               className={`flex-1 py-4 px-6 text-center font-semibold transition-all duration-200 ${
                 activeTab === 'reports'
@@ -247,7 +247,7 @@ export const ProfilePage: React.FC = () => {
             >
               <Brain className="w-5 h-5 inline mr-2" />
               Reports
-            </button>
+                </button>
           </div>
 
           <div className="p-6">
@@ -347,23 +347,23 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12">
-                    <Camera className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                    <h3 className="text-xl text-sharp text-white mb-4">No Videos Yet</h3>
-                    <p className="text-neutral-400 font-medium mb-6">
-                      {isAthlete 
-                        ? "Upload your first highlight video to showcase your talent!"
-                        : "No videos have been uploaded yet."
-                      }
-                    </p>
-                    {isAthlete && (
+              <div className="text-center py-12">
+                <Camera className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+                <h3 className="text-xl text-sharp text-white mb-4">No Videos Yet</h3>
+                <p className="text-neutral-400 font-medium mb-6">
+                  {isAthlete 
+                    ? "Upload your first highlight video to showcase your talent!"
+                    : "No videos have been uploaded yet."
+                  }
+                </p>
+                {isAthlete && (
                       <button 
                         onClick={() => window.location.href = '/upload'}
                         className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Upload Video</span>
-                      </button>
+                  </button>
                     )}
                   </div>
                 )}

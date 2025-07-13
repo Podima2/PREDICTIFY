@@ -3,6 +3,7 @@ import { ArrowLeft, User, Loader2, CheckCircle, AlertCircle } from 'lucide-react
 import { useUserRegistry } from '../../hooks/useUserRegistry';
 import { AthleteProfile } from '../../types';
 import { AvatarUpload } from '../ui/AvatarUpload';
+import { CustomSelect } from '../ui/CustomSelect';
 
 interface AthleteProfileFormProps {
   onSuccess: () => void;
@@ -25,6 +26,18 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
     'Goalkeeper', 'Center Back', 'Full Back', 'Defensive Midfielder', 
     'Central Midfielder', 'Attacking Midfielder', 'Winger', 'Striker'
   ];
+
+  const sportOptions = sports.map(sport => ({
+    value: sport,
+    label: sport
+  }));
+
+  const positionOptions = formData.sport === 'Football' 
+    ? footballPositions.map(position => ({
+        value: position,
+        label: position
+      }))
+    : [{ value: 'Player', label: 'Player' }];
 
   const handleInputChange = (field: keyof AthleteProfile, value: string | number) => {
     setFormData(prev => ({
@@ -70,11 +83,11 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-950 border border-red-800 rounded-xl flex items-center space-x-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-          <div>
+        <div className="mb-6 p-4 bg-red-950 border border-red-800 rounded-xl flex items-start space-x-3">
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
             <p className="text-red-300 font-medium">Registration Failed</p>
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-red-400 text-sm break-words overflow-hidden">{error}</p>
           </div>
         </div>
       )}
@@ -100,7 +113,7 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Enter your full name"
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white placeholder-neutral-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-medium"
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white placeholder-neutral-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-200 font-medium focus:outline-none"
               required
               disabled={isLoading}
             />
@@ -116,7 +129,7 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
               onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 18)}
               min="13"
               max="50"
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-medium"
+              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-200 font-medium focus:outline-none"
               required
               disabled={isLoading}
             />
@@ -128,39 +141,26 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
             <label className="block text-sm font-semibold text-neutral-300 mb-3">
               Sport *
             </label>
-            <select
+            <CustomSelect
               value={formData.sport}
-              onChange={(e) => handleInputChange('sport', e.target.value)}
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-medium"
+              onChange={(value) => handleInputChange('sport', value)}
+              options={sportOptions}
+              placeholder="Select your sport"
               required
-              disabled={isLoading}
-            >
-              {sports.map(sport => (
-                <option key={sport} value={sport}>{sport}</option>
-              ))}
-            </select>
+            />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-neutral-300 mb-3">
               Position *
             </label>
-            <select
+            <CustomSelect
               value={formData.position}
-              onChange={(e) => handleInputChange('position', e.target.value)}
-              className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-medium"
+              onChange={(value) => handleInputChange('position', value)}
+              options={positionOptions}
+              placeholder="Select your position"
               required
-              disabled={isLoading}
-            >
-              <option value="">Select your position</option>
-              {formData.sport === 'Football' ? (
-                footballPositions.map(position => (
-                  <option key={position} value={position}>{position}</option>
-                ))
-              ) : (
-                <option value="Player">Player</option>
-              )}
-            </select>
+            />
           </div>
         </div>
 
@@ -172,7 +172,7 @@ export const AthleteProfileForm: React.FC<AthleteProfileFormProps> = ({ onSucces
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
             placeholder="Tell scouts about your playing style, achievements, and goals..."
-            className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-4 text-white placeholder-neutral-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 resize-none font-medium"
+            className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-4 text-white placeholder-neutral-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-200 resize-none font-medium focus:outline-none"
             rows={4}
             required
             disabled={isLoading}

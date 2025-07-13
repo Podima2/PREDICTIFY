@@ -35,10 +35,10 @@ const UploadPage: React.FC = () => {
     position: '',
     skillsShowcased: [] as string[],
     tags: [] as string[],
-    opponent: '',
+      opponent: '',
     gameDate: '',
-    competition: '',
-    result: ''
+      competition: '',
+      result: ''
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -193,16 +193,16 @@ const UploadPage: React.FC = () => {
   }, [uploadError, isUploadingToContract, isUploadPending, isUploading, uploadData]);
 
   const handleReset = () => {
-    setUploadStatus('idle');
-    setStep(1);
-    setSelectedFile(null);
+              setUploadStatus('idle');
+              setStep(1);
+              setSelectedFile(null);
     setTransactionHash('');
-    setFormData({
-      title: '',
-      description: '',
+              setFormData({
+                title: '',
+                description: '',
       sport: 'Soccer',
-      position: '',
-      skillsShowcased: [],
+                position: '',
+                skillsShowcased: [],
       tags: [],
       opponent: '',
       gameDate: '',
@@ -297,7 +297,7 @@ const UploadPage: React.FC = () => {
                 selectedFile={selectedFile}
                 dragActive={dragActive}
                 onDrag={handleDrag}
-                onDrop={handleDrop}
+                  onDrop={handleDrop}
                 onFileSelect={handleFileSelect}
                 onNext={nextStep}
               />
