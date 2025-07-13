@@ -505,5 +505,10 @@ export function useHighlights() {
     isUploading: isUploading || isUploadingToContract || isUploadPending,
     uploadProgress,
     uploadError,
+    
+    // Transaction status
+    isUploadingToContract,
+    isUploadPending,
+    uploadData,
   };
 } 
