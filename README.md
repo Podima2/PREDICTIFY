@@ -145,7 +145,18 @@ npm run dev
 
 ### Environment Variables
 
+Create a `.env` file in the root directory with the following variables:
+
 ```env
+# Hugging Face API Configuration
+# Get your API key from: https://huggingface.co/settings/tokens
+REACT_APP_HUGGING_FACE_API_KEY=your_hugging_face_api_key_here
+
+# Pinata IPFS Configuration (if not already configured)
+VITE_PINATA_API_KEY=your_pinata_api_key_here
+VITE_PINATA_SECRET_KEY=your_pinata_secret_key_here
+
+# Other configurations
 REACT_APP_AI_API_URL=https://api.talentflow.ai
 REACT_APP_VIDEO_STORAGE_URL=https://videos.talentflow.ai
 REACT_APP_ANALYTICS_KEY=your_analytics_key
@@ -156,7 +167,7 @@ REACT_APP_ANALYTICS_KEY=your_analytics_key
 - [x] Core video upload and playback
 - [x] Basic athlete profiles
 - [x] TikTok-style feed interface
-- [ ] AI scouting report generation
+- [x] AI scouting report generation (Hugging Face integration)
 - [ ] Advanced search and filtering
 - [ ] Scout dashboard and analytics
 - [ ] Mobile app development

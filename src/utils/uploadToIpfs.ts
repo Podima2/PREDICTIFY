@@ -84,7 +84,7 @@ export async function uploadImageToIPFS(file: File): Promise<string> {
 
     const { IpfsHash } = await pinata.upload.file(file);
     console.log("✅ Image uploaded to IPFS:", IpfsHash);
-    return IpfsHash;
+  return IpfsHash;
   } catch (error) {
     console.error("❌ Failed to upload image to IPFS:", error);
     throw new Error("Failed to upload image to IPFS");

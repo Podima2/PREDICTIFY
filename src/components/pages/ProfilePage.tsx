@@ -46,7 +46,7 @@ export const ProfilePage: React.FC = () => {
         } finally {
           setHighlightsLoading(false);
         }
-      } else if (userRole === UserRole.Scout) {
+        } else if (userRole === UserRole.Scout) {
         const scoutProfile = await getScoutProfile(address);
         setProfile(scoutProfile);
         setHighlights([]); // Scouts don't have highlights
@@ -72,7 +72,7 @@ export const ProfilePage: React.FC = () => {
         } finally {
           setHighlightsLoading(false);
         }
-      }
+        }
     } catch (error) {
       console.error('Failed to deactivate highlight:', error);
     }
@@ -243,8 +243,8 @@ export const ProfilePage: React.FC = () => {
                 activeTab === 'reports'
                   ? 'text-white border-b-2 border-red-600'
                   : 'text-neutral-400 hover:text-white'
-              }`}
-            >
+                  }`}
+                >
               <Settings className="w-5 h-5 inline mr-2" />
               Reports
                 </button>

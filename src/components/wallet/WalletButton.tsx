@@ -60,15 +60,15 @@ export const WalletButton: React.FC = () => {
           <Zap className="w-4 h-4 text-red-400" />
         </div>
         
-                  <div className="flex items-center space-x-2">
-            <div className="text-left">
-              <div className="font-semibold">
-                {address ? formatAddress(address) : 'Connected'}
-              </div>
-              <div className="text-xs text-red-400 font-medium -mt-0.5">
-                Chiliz Chain
-              </div>
+        <div className="flex items-center space-x-2">
+          <div className="text-left">
+            <div className="font-semibold">
+              {address ? formatAddress(address) : 'Connected'}
             </div>
+            <div className="text-xs text-red-400 font-medium -mt-0.5">
+              Chiliz Chain
+            </div>
+          </div>
           
           <ChevronDown className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
             showDropdown ? 'rotate-180' : ''

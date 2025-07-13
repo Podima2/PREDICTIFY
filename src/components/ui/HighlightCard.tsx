@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Heart, Bookmark, Eye, Share2, MoreVertical, Gift } from 'lucide-react';
+import { Play, Pause, Heart, Bookmark, Eye, Share2, MoreVertical, Gift, Brain } from 'lucide-react';
 import { Highlight } from '../../hooks/useHighlights';
 import { TipModal } from './TipModal';
+import { AIAnalysisModal } from './AIAnalysisModal';
 
 interface HighlightCardProps {
   highlight: Highlight;
@@ -29,6 +30,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
   const [videoError, setVideoError] = useState(false);
   const [showTipModal, setShowTipModal] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Get the correct video URL
@@ -109,6 +111,11 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
     console.log('🎬 Video can play');
     setIsLoading(false);
     setVideoLoaded(true);
+  };
+
+  const handleAIAnalysisClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowAIModal(true);
   };
 
   const handlePlayPause = async (e: React.MouseEvent) => {
@@ -334,6 +341,19 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
           </div>
         </div>
 
+           {/* AI Analysis Button */}
+           <div className="absolute top-3 right-3">
+            <button
+              onClick={handleAIAnalysisClick}
+              className="group flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-600/90 to-blue-600/90 backdrop-blur-sm hover:from-purple-500 hover:to-blue-500 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg hover:shadow-purple-500/20"
+              title="View AI Analysis"
+            >
+              <Brain className="w-5 h-5 text-white group-hover:animate-pulse" />
+            </button>
+          </div>
+       
+
+
         {/* Content */}
         <div className="p-6">
           {/* Title and Description */}
@@ -469,6 +489,22 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
         athleteName={athleteName}
         athleteAddress={highlight.athleteAddress || ''}
         highlightId={highlight.id}
+      />
+
+           {/* AI Analysis Modal */}
+           <AIAnalysisModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        highlight={{
+          id: highlight.id,
+          title: highlight.title,
+          athleteAddress: highlight.athleteAddress,
+          sport: highlight.sport,
+          position: highlight.position,
+          skillsShowcased: highlight.skillsShowcased,
+          videoUrl: highlight.videoUrl,
+          videoIpfsHash: highlight.videoIpfsHash
+        }}
       />
     </>
   );

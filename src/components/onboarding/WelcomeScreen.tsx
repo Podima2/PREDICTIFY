@@ -124,11 +124,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ userRole, onComple
               <span className="font-mono font-bold text-red-400 text-lg">{countdown}</span>
               <span>seconds...</span>
             </p>
-            <div className="flex items-center justify-center space-x-1 mt-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-            </div>
+        <div className="flex items-center justify-center space-x-1 mt-2">
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        </div>
           </>
         ) : (
           <p>Please wait while we complete your registration...</p>
