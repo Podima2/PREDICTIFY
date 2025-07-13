@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, TrendingUp, Brain, Heart, Bookmark, Eye, Edit, Trash2, Plus } from 'lucide-react';
-import { useWallet } from '../../hooks/useWallet';
-import { useUserRegistry } from '../../hooks/useUserRegistry';
-import { useHighlights } from '../../hooks/useHighlights';
-import { useTipping } from '../../hooks/useTipping';
+import { Heart, Bookmark, Eye, Share2, Upload, RefreshCw, Settings, Trophy, TrendingUp, Users, Calendar } from 'lucide-react';
 import { HighlightCard } from '../ui/HighlightCard';
+import { useHighlights } from '../../hooks/useHighlights';
+import { useChilizWallet } from '../../hooks/useChilizWallet';
+import { useUserRegistry } from '../../hooks/useUserRegistry';
 import { UserRole } from '../../types';
 
 export const ProfilePage: React.FC = () => {
-  const { address, isConnected } = useWallet();
+  const { address, isConnected } = useChilizWallet();
   const { userRole, getAthleteProfile, getScoutProfile } = useUserRegistry();
   const { getAthleteHighlights, deactivateHighlight } = useHighlights();
-  const { sendTip } = useTipping();
   
   const [activeTab, setActiveTab] = useState<'videos' | 'stats' | 'reports'>('videos');
   const [profile, setProfile] = useState<any>(null);
@@ -95,34 +93,6 @@ export const ProfilePage: React.FC = () => {
 
   const handleView = async (highlightId: number) => {
     // View functionality handled by HighlightCard
-  };
-
-  const handleTip = async (highlightId: number, amount: number, tokenType: string) => {
-    try {
-      // Find the highlight to get the athlete's address
-      const highlight = highlights.find(h => h.id === highlightId);
-      if (!highlight) {
-        throw new Error('Highlight not found');
-      }
-
-      if (!highlight.athleteAddress) {
-        throw new Error('Athlete address not available');
-      }
-
-      console.log(`Sending tip: ${amount} ${tokenType} to ${highlight.athleteAddress}`);
-      
-      const result = await sendTip(highlightId, amount, tokenType, highlight.athleteAddress);
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to send tip');
-      }
-
-      console.log(`Tip sent successfully: ${result.transactionHash}`);
-      
-    } catch (error) {
-      console.error('Failed to send tip:', error);
-      throw new Error(error instanceof Error ? error.message : 'Failed to send tip. Please try again.');
-    }
   };
 
   // Convert CompleteHighlight to Highlight for HighlightCard compatibility
@@ -253,7 +223,7 @@ export const ProfilePage: React.FC = () => {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              <Camera className="w-5 h-5 inline mr-2" />
+              <Upload className="w-5 h-5 inline mr-2" />
               Videos
             </button>
             <button
@@ -275,7 +245,7 @@ export const ProfilePage: React.FC = () => {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              <Brain className="w-5 h-5 inline mr-2" />
+              <Settings className="w-5 h-5 inline mr-2" />
               Reports
                 </button>
           </div>
@@ -312,7 +282,7 @@ export const ProfilePage: React.FC = () => {
                         onClick={() => window.location.href = '/upload'}
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Upload className="w-4 h-4" />
                         <span>Upload New</span>
                       </button>
                     </div>
@@ -348,7 +318,6 @@ export const ProfilePage: React.FC = () => {
                               onSave={handleSave}
                               onShare={handleShare}
                               onView={handleView}
-                              onTip={handleTip}
                               showActions={false}
                               className="hover:scale-[1.02] transition-transform duration-300"
                             />
@@ -361,13 +330,13 @@ export const ProfilePage: React.FC = () => {
                                     onClick={() => console.log('Edit highlight:', highlight.id)}
                                     className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full text-white transition-colors"
                                   >
-                                    <Edit className="w-4 h-4" />
+                                    <Settings className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleDeactivateHighlight(highlight.id)}
                                     className="p-2 bg-red-600 hover:bg-red-700 rounded-full text-white transition-colors"
                                   >
-                                    <Trash2 className="w-4 h-4" />
+                                    <RefreshCw className="w-4 h-4" />
                                   </button>
                                 </div>
                               </div>
@@ -379,7 +348,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 ) : (
               <div className="text-center py-12">
-                <Camera className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+                <Upload className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
                 <h3 className="text-xl text-sharp text-white mb-4">No Videos Yet</h3>
                 <p className="text-neutral-400 font-medium mb-6">
                   {isAthlete 
@@ -392,7 +361,7 @@ export const ProfilePage: React.FC = () => {
                         onClick={() => window.location.href = '/upload'}
                         className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center space-x-2 mx-auto"
                       >
-                        <Plus className="w-5 h-5" />
+                        <Upload className="w-5 h-5" />
                         <span>Upload Video</span>
                   </button>
                     )}
@@ -435,7 +404,7 @@ export const ProfilePage: React.FC = () => {
 
             {activeTab === 'reports' && (
               <div className="text-center py-12">
-                <Brain className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+                <Settings className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
                 <h3 className="text-xl text-sharp text-white mb-4">AI Scouting Reports</h3>
                 <p className="text-neutral-400 font-medium">
                   {isAthlete 

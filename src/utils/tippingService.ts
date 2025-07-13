@@ -120,14 +120,25 @@ export class TippingService {
     fromAddress: string,
     toAddress: string,
     writeContract: any,
-    sendTransaction?: any
+    sendTransaction?: any,
+    getBalance?: any
   ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
     try {
-      console.log(`Sending tip: ${amount} ${tokenType} from ${fromAddress} to ${toAddress}`);
+      console.log(`🚀 Initiating tip: ${amount} ${tokenType} from ${fromAddress} to ${toAddress}`);
 
       // Validate inputs
       if (!amount || amount <= 0) {
         throw new Error('Invalid tip amount');
+      }
+
+      // Check for minimum amount (0.01 CHZ to avoid very small amounts that get auto-rejected)
+      if (amount < 0.01) {
+        throw new Error('Tip amount is too small. Minimum amount is 0.01 CHZ');
+      }
+
+      // Check for maximum amount to prevent accidental large transfers
+      if (amount > 1000) {
+        throw new Error('Tip amount is too large. Maximum amount is 1000 CHZ');
       }
 
       if (!fromAddress || !toAddress) {
@@ -144,7 +155,22 @@ export class TippingService {
       }
 
       // Convert amount to wei (assuming 18 decimals for most tokens)
-      const amountInWei = parseEther(amount.toString());
+      const amountInWei = parseEther(amount.toFixed(18));
+      console.log(`💰 Amount in wei: ${amountInWei.toString()}`);
+
+      // Check balance if getBalance function is provided
+      if (getBalance && tokenType === 'chz') {
+        try {
+          const balance = await getBalance();
+          console.log(`💳 Current balance: ${formatEther(balance)} CHZ`);
+          
+          if (balance < amountInWei) {
+            throw new Error(`Insufficient balance. You have ${formatEther(balance)} CHZ, but trying to send ${amount} CHZ`);
+          }
+        } catch (balanceError) {
+          console.warn('Could not check balance:', balanceError);
+        }
+      }
 
       let transactionHash: string;
 
@@ -153,6 +179,8 @@ export class TippingService {
         if (!sendTransaction) {
           throw new Error('Send transaction function not available');
         }
+        
+        console.log('🔄 Executing native CHZ transfer...');
         transactionHash = await this.transferNativeCHZ(
           toAddress,
           amountInWei,
@@ -160,6 +188,7 @@ export class TippingService {
         );
       } else {
         // ERC20 token transfer
+        console.log('🔄 Executing ERC20 token transfer...');
         transactionHash = await this.transferERC20Token(
           tokenAddress,
           toAddress,
@@ -183,7 +212,7 @@ export class TippingService {
 
       this.tipHistory.push(tipTransaction);
 
-      console.log(`Tip sent successfully: ${transactionHash}`);
+      console.log(`✅ Tip transaction submitted successfully: ${transactionHash}`);
 
       return {
         success: true,
@@ -191,9 +220,36 @@ export class TippingService {
       };
 
     } catch (error) {
-      console.error('Failed to send tip:', error);
+      console.error('❌ Failed to send tip:', error);
       
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      let errorMessage = 'Unknown error occurred';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Provide more specific error messages
+        if (error.message.includes('insufficient funds') || error.message.includes('Insufficient')) {
+          errorMessage = 'Insufficient funds in your wallet';
+        } else if (error.message.includes('user denied') || error.message.includes('cancelled') || error.message.includes('denied') || error.message.includes('rejected')) {
+          errorMessage = 'Transaction was cancelled by user';
+        } else if (error.message.includes('network')) {
+          errorMessage = 'Network error. Please check your connection';
+        } else if (error.message.includes('gas')) {
+          errorMessage = 'Gas estimation failed. Please try again';
+        }
+      }
+      
+      // Handle MetaMask specific errors
+      if (error && typeof error === 'object' && 'code' in error) {
+        const errorCode = (error as any).code;
+        if (errorCode === 4001) {
+          errorMessage = 'Transaction was cancelled by user';
+        } else if (errorCode === -32603) {
+          errorMessage = 'Network error. Please check your connection';
+        } else if (errorCode === -32000) {
+          errorMessage = 'Insufficient funds in your wallet';
+        }
+      }
       
       return {
         success: false,
@@ -208,18 +264,74 @@ export class TippingService {
   private async transferNativeCHZ(
     toAddress: string,
     amountInWei: bigint,
-    sendTransaction: any
+    sendTransactionAsync: any
   ): Promise<string> {
     try {
-      const result = await sendTransaction({
-        to: toAddress as `0x${string}`,
+      console.log(`💸 Sending ${formatEther(amountInWei)} CHZ to ${toAddress}`);
+      
+      // Prepare transaction with better parameters to prevent auto-rejection
+      const transactionRequest = {
+        to: toAddress,
         value: amountInWei,
-      });
+        // Add explicit gas limit to prevent estimation issues
+        gas: 21000n, // Standard gas limit for simple transfers
+      };
 
-      return result.hash;
+      console.log('📝 Transaction request:', transactionRequest);
+      
+      // Send the transaction using sendTransactionAsync
+      const result = await sendTransactionAsync(transactionRequest);
+
+      console.log('📝 Transaction result:', result);
+      
+      // sendTransactionAsync should return the transaction hash directly
+      if (!result) {
+        console.log('⚠️ Transaction result is undefined');
+        throw new Error('Transaction failed - no result returned');
+      }
+      
+      // The result should be the transaction hash
+      if (typeof result === 'string') {
+        console.log('✅ Transaction hash received:', result);
+        return result;
+      }
+      
+      // If it's an object with hash property
+      if (result && typeof result === 'object' && result.hash) {
+        console.log('✅ Transaction hash received:', result.hash);
+        return result.hash;
+      }
+      
+      throw new Error('Transaction failed - no hash returned');
+
     } catch (error) {
-      console.error('Native CHZ transfer failed:', error);
-      throw new Error('Failed to transfer CHZ tokens');
+      console.error('❌ Native CHZ transfer failed:', error);
+      
+      if (error instanceof Error) {
+        // Check for specific error types
+        if (error.message.includes('insufficient funds')) {
+          throw new Error('Insufficient CHZ balance in your wallet');
+        } else if (error.message.includes('user denied') || error.message.includes('cancelled') || error.message.includes('denied')) {
+          throw new Error('Transaction was cancelled by user');
+        } else if (error.message.includes('network')) {
+          throw new Error('Network error. Please check your connection and try again');
+        } else if (error.message.includes('gas')) {
+          throw new Error('Gas estimation failed. Please try again');
+        } else if (error.message.includes('rejected')) {
+          throw new Error('Transaction was rejected');
+        } else if (error.message.includes('nonce')) {
+          throw new Error('Transaction nonce error. Please try again');
+        } else if (error.message.includes('replacement')) {
+          throw new Error('Transaction replacement error. Please try again');
+        }
+      }
+      
+      // If it's a user rejection (code 4001), handle it specifically
+      if (error && typeof error === 'object' && 'code' in error && error.code === 4001) {
+        throw new Error('Transaction was cancelled by user');
+      }
+      
+      throw new Error('Failed to transfer CHZ tokens. Please try again.');
     }
   }
 
@@ -233,6 +345,8 @@ export class TippingService {
     writeContract: any
   ): Promise<string> {
     try {
+      console.log(`💸 Sending ${formatEther(amountInWei)} tokens from ${tokenAddress} to ${toAddress}`);
+      
       const result = await writeContract({
         address: tokenAddress as `0x${string}`,
         abi: ERC20_ABI,
@@ -240,10 +354,27 @@ export class TippingService {
         args: [toAddress as `0x${string}`, amountInWei]
       });
 
+      console.log('📝 ERC20 transaction result:', result);
+      
+      if (!result || !result.hash) {
+        throw new Error('ERC20 transaction failed - no hash returned');
+      }
+
       return result.hash;
     } catch (error) {
-      console.error('ERC20 token transfer failed:', error);
-      throw new Error('Failed to transfer tokens');
+      console.error('❌ ERC20 token transfer failed:', error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes('insufficient funds')) {
+          throw new Error('Insufficient token balance');
+        } else if (error.message.includes('user rejected')) {
+          throw new Error('Transaction was cancelled');
+        } else if (error.message.includes('network')) {
+          throw new Error('Network error. Please check your connection and try again');
+        }
+      }
+      
+      throw new Error('Failed to transfer tokens. Please try again.');
     }
   }
 

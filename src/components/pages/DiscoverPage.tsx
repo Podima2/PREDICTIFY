@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Heart, TrendingUp, Clock } from 'lucide-react';
-import { useHighlights } from '../../hooks/useHighlights';
-import { useTipping } from '../../hooks/useTipping';
+import { Search, Clock, Heart, TrendingUp } from 'lucide-react';
 import { HighlightCard } from '../ui/HighlightCard';
-import { Highlight } from '../../hooks/useHighlights';
 import { CustomSelect } from '../ui/CustomSelect';
+import { useHighlights } from '../../hooks/useHighlights';
+import { Highlight } from '../../hooks/useHighlights';
 
 export const DiscoverPage: React.FC = () => {
   const { fetchRecentHighlights, likeHighlight, saveHighlight, recordView } = useHighlights();
-  const { sendTip } = useTipping();
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,34 +86,6 @@ export const DiscoverPage: React.FC = () => {
   const handleShare = (highlightId: number) => {
     // Implement share functionality
     console.log('Sharing highlight:', highlightId);
-  };
-
-  const handleTip = async (highlightId: number, amount: number, tokenType: string) => {
-    try {
-      // Find the highlight to get the athlete's address
-      const highlight = highlights.find(h => h.id === highlightId);
-      if (!highlight) {
-        throw new Error('Highlight not found');
-      }
-
-      if (!highlight.athleteAddress) {
-        throw new Error('Athlete address not available');
-      }
-
-      console.log(`Sending tip: ${amount} ${tokenType} to ${highlight.athleteAddress}`);
-      
-      const result = await sendTip(highlightId, amount, tokenType, highlight.athleteAddress);
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to send tip');
-      }
-
-      console.log(`Tip sent successfully: ${result.transactionHash}`);
-      
-    } catch (error) {
-      console.error('Failed to send tip:', error);
-      throw new Error(error instanceof Error ? error.message : 'Failed to send tip. Please try again.');
-    }
   };
 
   const filteredAndSortedHighlights = highlights
@@ -294,7 +264,6 @@ export const DiscoverPage: React.FC = () => {
                 onSave={handleSave}
                 onShare={handleShare}
                 onView={handleView}
-                onTip={handleTip}
                 className="hover:scale-[1.02] transition-transform duration-300"
               />
             ))}
