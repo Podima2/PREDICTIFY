@@ -204,9 +204,9 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
   }, [highlight.videoUrl, videoUrl, hasValidVideo, videoAccessible, highlight.videoIpfsHash, highlight.metadataIpfsHash, highlight.title, highlight.id, highlight.thumbnailUrl]);
 
   return (
-    <div className={`bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-700 transition-all duration-300 ${className}`}>
-      {/* Video Container */}
-      <div className="relative aspect-[9/16] bg-black">
+    <div className={`bg-neutral-950 border border-neutral-800 rounded-xl overflow-hidden hover:border-neutral-700 transition-all duration-300 ${className}`}>
+      {/* Video Container - Now horizontal */}
+      <div className="relative aspect-video bg-black">
         {hasValidVideo ? (
           <>
             <video
@@ -241,7 +241,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
             </button>
 
             {/* Duration Badge */}
-            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded">
+            <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-lg">
               {formatDuration(highlight.duration)}
             </div>
           </>
@@ -277,7 +277,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
         )}
 
         {/* Top Right Badges */}
-        <div className="absolute top-2 right-2 flex flex-col space-y-1">
+        <div className="absolute top-3 right-3 flex flex-col space-y-1">
           {highlight.sport && (
             <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
               {highlight.sport}
@@ -292,20 +292,20 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-5">
         {/* Title and Description */}
-        <div className="mb-3">
-          <h3 className="text-lg font-bold text-white mb-1 line-clamp-2">
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
             {highlight.title}
           </h3>
-          <p className="text-neutral-400 text-sm line-clamp-2">
+          <p className="text-neutral-400 text-sm line-clamp-2 leading-relaxed">
             {highlight.description}
           </p>
         </div>
 
         {/* Game Context */}
         {(highlight.opponent || highlight.competition) && (
-          <div className="mb-3 p-3 bg-neutral-900 rounded-lg">
+          <div className="mb-4 p-3 bg-neutral-900/50 rounded-lg border border-neutral-800">
             <div className="flex items-center space-x-2 text-sm">
               {highlight.opponent && (
                 <span className="text-neutral-300">
@@ -326,79 +326,79 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
 
         {/* Skills */}
         {highlight.skillsShowcased.length > 0 && (
-          <div className="mb-3">
-            <div className="flex flex-wrap gap-1">
-              {highlight.skillsShowcased.slice(0, 3).map((skill: string) => (
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {highlight.skillsShowcased.slice(0, 4).map((skill: string) => (
                 <span
                   key={skill}
-                  className="bg-red-600/20 text-red-300 text-xs px-2 py-1 rounded-full border border-red-600/30"
+                  className="bg-red-600/20 text-red-300 text-xs px-3 py-1 rounded-full border border-red-600/30 font-medium"
                 >
                   {skill}
                 </span>
               ))}
-              {highlight.skillsShowcased.length > 3 && (
+              {highlight.skillsShowcased.length > 4 && (
                 <span className="text-neutral-500 text-xs px-2 py-1">
-                  +{highlight.skillsShowcased.length - 3} more
+                  +{highlight.skillsShowcased.length - 4} more
                 </span>
               )}
             </div>
           </div>
         )}
 
-        {/* Stats */}
-        <div className="flex items-center justify-between text-xs text-neutral-500 mb-3">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1">
-              <Eye className="w-3 h-3" />
-              <span>{formatNumber(highlight.views)}</span>
+        {/* Stats and Date */}
+        <div className="flex items-center justify-between text-sm text-neutral-500 mb-4">
+          <div className="flex items-center space-x-6">
+            <span className="flex items-center space-x-2">
+              <Eye className="w-4 h-4" />
+              <span className="font-medium">{formatNumber(highlight.views)}</span>
             </span>
-            <span className="flex items-center space-x-1">
-              <Heart className="w-3 h-3" />
-              <span>{formatNumber(highlight.likes)}</span>
+            <span className="flex items-center space-x-2">
+              <Heart className="w-4 h-4" />
+              <span className="font-medium">{formatNumber(highlight.likes)}</span>
             </span>
-            <span className="flex items-center space-x-1">
-              <Bookmark className="w-3 h-3" />
-              <span>{formatNumber(highlight.saves)}</span>
+            <span className="flex items-center space-x-2">
+              <Bookmark className="w-4 h-4" />
+              <span className="font-medium">{formatNumber(highlight.saves)}</span>
             </span>
           </div>
-          <span>{formatDate(highlight.uploadedAt)}</span>
+          <span className="text-xs text-neutral-600">{formatDate(highlight.uploadedAt)}</span>
         </div>
 
         {/* Action Buttons */}
         {showActions && (
-          <div className="flex items-center justify-between pt-3 border-t border-neutral-800">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between pt-4 border-t border-neutral-800">
+            <div className="flex items-center space-x-6">
               <button
                 onClick={handleLike}
-                className={`flex items-center space-x-1 transition-colors duration-200 ${
+                className={`flex items-center space-x-2 transition-colors duration-200 ${
                   isLiked ? 'text-red-500' : 'text-neutral-400 hover:text-red-500'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                <span className="text-xs">Like</span>
+                <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                <span className="text-sm font-medium">Like</span>
               </button>
               
               <button
                 onClick={handleSave}
-                className={`flex items-center space-x-1 transition-colors duration-200 ${
+                className={`flex items-center space-x-2 transition-colors duration-200 ${
                   isSaved ? 'text-blue-500' : 'text-neutral-400 hover:text-blue-500'
                 }`}
               >
-                <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-                <span className="text-xs">Save</span>
+                <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+                <span className="text-sm font-medium">Save</span>
               </button>
               
               <button
                 onClick={handleShare}
-                className="flex items-center space-x-1 text-neutral-400 hover:text-white transition-colors duration-200"
+                className="flex items-center space-x-2 text-neutral-400 hover:text-white transition-colors duration-200"
               >
-                <Share2 className="w-4 h-4" />
-                <span className="text-xs">Share</span>
+                <Share2 className="w-5 h-5" />
+                <span className="text-sm font-medium">Share</span>
               </button>
             </div>
             
-            <button className="text-neutral-400 hover:text-white transition-colors duration-200">
-              <MoreVertical className="w-4 h-4" />
+            <button className="text-neutral-400 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-neutral-800">
+              <MoreVertical className="w-5 h-5" />
             </button>
           </div>
         )}
