@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Heart, Bookmark, Eye, Share2, MoreVertical } from 'lucide-react';
+import { Play, Pause, Heart, Bookmark, Eye, Share2, MoreVertical, Gift } from 'lucide-react';
 import { Highlight } from '../../hooks/useHighlights';
+import { TipModal } from './TipModal';
 
 interface HighlightCardProps {
   highlight: Highlight;
@@ -8,6 +9,7 @@ interface HighlightCardProps {
   onSave?: (highlightId: number) => void;
   onShare?: (highlightId: number) => void;
   onView?: (highlightId: number) => void;
+  onTip?: (highlightId: number, amount: number, tokenType: string) => Promise<void>;
   showActions?: boolean;
   className?: string;
 }
@@ -18,6 +20,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
   onSave,
   onShare,
   onView,
+  onTip,
   showActions = true,
   className = ''
 }) => {
@@ -26,6 +29,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [videoAccessible, setVideoAccessible] = useState<boolean | null>(null);
+  const [showTipModal, setShowTipModal] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const playPromiseRef = useRef<Promise<void> | null>(null);
 
@@ -118,6 +122,12 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
 
   const handleView = () => {
     onView?.(highlight.id);
+  };
+
+  const handleTip = async (amount: number, tokenType: string) => {
+    if (onTip) {
+      await onTip(highlight.id, amount, tokenType);
+    }
   };
 
   const formatDuration = (seconds: number) => {
@@ -395,6 +405,14 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
                 <Share2 className="w-5 h-5" />
                 <span className="text-sm font-medium">Share</span>
               </button>
+              
+              <button
+                onClick={() => setShowTipModal(true)}
+                className="flex items-center space-x-2 text-neutral-400 hover:text-yellow-500 transition-colors duration-200"
+              >
+                <Gift className="w-5 h-5" />
+                <span className="text-sm font-medium">Tip</span>
+              </button>
             </div>
             
             <button className="text-neutral-400 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-neutral-800">
@@ -403,6 +421,14 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
           </div>
         )}
       </div>
+
+      {/* Tip Modal */}
+      <TipModal
+        isOpen={showTipModal}
+        onClose={() => setShowTipModal(false)}
+        athleteName={highlight.athleteAddress ? `${highlight.athleteAddress.substring(0, 6)}...${highlight.athleteAddress.substring(highlight.athleteAddress.length - 4)}` : 'Athlete'}
+        onTip={handleTip}
+      />
     </div>
   );
 };

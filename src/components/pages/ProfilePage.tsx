@@ -3,6 +3,7 @@ import { Camera, TrendingUp, Brain, Heart, Bookmark, Eye, Edit, Trash2, Plus } f
 import { useWallet } from '../../hooks/useWallet';
 import { useUserRegistry } from '../../hooks/useUserRegistry';
 import { useHighlights } from '../../hooks/useHighlights';
+import { useTipping } from '../../hooks/useTipping';
 import { HighlightCard } from '../ui/HighlightCard';
 import { UserRole } from '../../types';
 
@@ -10,6 +11,7 @@ export const ProfilePage: React.FC = () => {
   const { address, isConnected } = useWallet();
   const { userRole, getAthleteProfile, getScoutProfile } = useUserRegistry();
   const { getAthleteHighlights, deactivateHighlight } = useHighlights();
+  const { sendTip } = useTipping();
   
   const [activeTab, setActiveTab] = useState<'videos' | 'stats' | 'reports'>('videos');
   const [profile, setProfile] = useState<any>(null);
@@ -93,6 +95,34 @@ export const ProfilePage: React.FC = () => {
 
   const handleView = async (highlightId: number) => {
     // View functionality handled by HighlightCard
+  };
+
+  const handleTip = async (highlightId: number, amount: number, tokenType: string) => {
+    try {
+      // Find the highlight to get the athlete's address
+      const highlight = highlights.find(h => h.id === highlightId);
+      if (!highlight) {
+        throw new Error('Highlight not found');
+      }
+
+      if (!highlight.athleteAddress) {
+        throw new Error('Athlete address not available');
+      }
+
+      console.log(`Sending tip: ${amount} ${tokenType} to ${highlight.athleteAddress}`);
+      
+      const result = await sendTip(highlightId, amount, tokenType, highlight.athleteAddress);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send tip');
+      }
+
+      console.log(`Tip sent successfully: ${result.transactionHash}`);
+      
+    } catch (error) {
+      console.error('Failed to send tip:', error);
+      throw new Error(error instanceof Error ? error.message : 'Failed to send tip. Please try again.');
+    }
   };
 
   // Convert CompleteHighlight to Highlight for HighlightCard compatibility
@@ -318,6 +348,7 @@ export const ProfilePage: React.FC = () => {
                               onSave={handleSave}
                               onShare={handleShare}
                               onView={handleView}
+                              onTip={handleTip}
                               showActions={false}
                               className="hover:scale-[1.02] transition-transform duration-300"
                             />
